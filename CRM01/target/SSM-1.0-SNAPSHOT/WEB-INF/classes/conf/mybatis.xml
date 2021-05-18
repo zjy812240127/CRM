@@ -14,6 +14,7 @@
     <typeAliases>
         <!--        实体类所在的包名，也可以包含非实体类-->
         <package name="com.zjut.domain"/>
+<!--        <package name="com.zjut.workbench.domain"/>-->
     </typeAliases>
 
     <!--    sql映射文件的位置-->
@@ -24,6 +25,7 @@
                     2.mapper文件和dao接口必须在同一目录
         -->
         <package name="com.zjut.dao"/>
+<!--        <package name="com.zjut.workbench.dao"/>-->
     </mappers>
 
 </configuration>

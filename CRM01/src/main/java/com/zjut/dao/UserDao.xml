@@ -9,6 +9,11 @@
         
     </select>
 
+    <select id="getUserList" resultType="com.zjut.domain.User">
+        select * from tbl_user ;
+
+    </select>
+
     <!--插入操作-->
     <insert id="">
         

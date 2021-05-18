@@ -13,6 +13,8 @@
     <!--SpringMVC的配置文件，用来声明Controller和其他web相关的对象-->
     <!--    组件扫描器,扫描Controller注解-->
     <context:component-scan base-package="com.zjut.controller"/>
+<!--    为workbench包的控制器添加注解扫描-->
+    <context:component-scan base-package="com.zjut.workbench.web.controller"/>
 
     <!--    组件扫描器，扫描ControllerAdvice注解-->
     <context:component-scan base-package="com.zjut.handler"/>
@@ -23,15 +25,15 @@
     </bean>
 
     <!--    声明拦截器，可以用一个或多个-->
-    <mvc:interceptors>
-        <mvc:interceptor>
-            <!--            声明对访问jsp和.do操作的请求都进行拦截-->
-            <mvc:mapping path="/**"/>
-<!--            <mvc:mapping path="*.do"/>-->
-            <!--            申明使用的拦截器对象-->
-            <bean class="com.zjut.handler.MyInterceptor"/>
-        </mvc:interceptor>
-    </mvc:interceptors>
+<!--    <mvc:interceptors>-->
+<!--        <mvc:interceptor>-->
+<!--            &lt;!&ndash;            声明对访问jsp和.do操作的请求都进行拦截&ndash;&gt;-->
+<!--            <mvc:mapping path="*.jsp"/>-->
+<!--&lt;!&ndash;            <mvc:mapping path="*.do"/>&ndash;&gt;-->
+<!--            &lt;!&ndash;            申明使用的拦截器对象&ndash;&gt;-->
+<!--            <bean class="com.zjut.handler.MyInterceptor"/>-->
+<!--        </mvc:interceptor>-->
+<!--    </mvc:interceptors>-->
 
     <!--    注解驱动
         1. 响应ajax

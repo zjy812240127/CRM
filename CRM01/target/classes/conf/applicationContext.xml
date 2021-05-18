@@ -25,10 +25,14 @@
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
         <property name="basePackage" value="com.zjut.dao"/>
+
     </bean>
+
 
     <!--    声明service的注解，也就是@Service所在的包名位置-->
     <context:component-scan base-package="com.zjut.service"/>
+
+    <context:component-scan base-package="com.zjut.workbench.service"/>
 
     <!--    事务的配置：配置注解或者配置aspectj-->
 

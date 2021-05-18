@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zjut.dao.ActivityDao">
+
+<!--    <select id="" resultType="">-->
+<!--        -->
+<!--    </select>-->
+
+    <!--插入操作-->
+    <insert id="save">
+        insert into tbl_activity(id,owner,name,startDate,endDate,cost,description,createTime,createBy)
+        values ( #{id}, #{owner},#{name},#{startDate},#{endDate},#{cost},#{description},#{createTime},#{createBy}
+        )
+    </insert>
+</mapper>

@@ -4,6 +4,17 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
 
+
+
+  <!--
+    定义规范关键字：每个公司规范不同
+        add/creat: 跳转到添加页，或者打开添加操作的模态窗口
+        save: 执行添加操作
+        edit: 跳转到修改页，或打开修改操作的模态窗口
+        update: 执行修改操作
+        get: 执行查询操作，  select/find/query
+        特殊操作： login......
+  -->
   <!--  注册SpringMVC的中央调度器-->
   <servlet>
     <servlet-name>myWeb</servlet-name>
