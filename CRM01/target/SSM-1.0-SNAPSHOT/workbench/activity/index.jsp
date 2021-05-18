@@ -123,7 +123,22 @@ request.getContextPath()+"/";
 						 * 		关闭添加操作的模态窗口
 						 *
 						 */
-						alert(data.success);
+
+						// 清空添加操作模态窗口中的数据，以免下次再添加还存在已有的数据
+						// 提交表单
+						// $("#activityAddForm").submit();
+						/**
+						 * 对于表单的jquery对象，提供了submit方法让我们在js中可以提交表单
+						 * 但是虽然idea为我们提示了存在表单的reset方法，该方法再jquery中无法用
+						 * 		但是，我们可以用原生的dom对象来执行reset操作
+						 * 			jquery对象转dom对象：
+						 * 				jquery对象[下标]
+						 * 			dom对象转jquery对象
+						 * 				$(dom)
+						 */
+						// 使用原生js语言的dom对象中的reset方法来重置form中的数据
+						$("#activityAddForm")[0].reset();
+
 						$("#createActivityModal").modal("hide");
 
 					}else{
@@ -153,8 +168,8 @@ request.getContextPath()+"/";
 					<h4 class="modal-title" id="myModalLabel1">创建市场活动</h4>
 				</div>
 				<div class="modal-body">
-				
-					<form class="form-horizontal" role="form">
+
+					<form id = "activityAddForm" class="form-horizontal" role="form">
 					
 						<div class="form-group">
 							<label for="create-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
