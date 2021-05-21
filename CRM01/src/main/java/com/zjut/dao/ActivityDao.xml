@@ -4,9 +4,83 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zjut.dao.ActivityDao">
 
-<!--    <select id="" resultType="">-->
-<!--        -->
-<!--    </select>-->
+
+<!--    &#45;&#45; 关联查询，因为要查的数据一部分在a表，
+                一部分在u表（a.owner应该用u表中的name中的中文名字）
+                动态sql语句查询，
+                <where>
+                    <if test= "name != null and name !=''">
+                        a.name like '%' #{name} '%'
+                    </if>
+
+                </where>
+                -->
+
+    <select id="searchActivity" resultType="com.zjut.domain.Activity">
+        select
+        a.id,
+        a.name,
+        u.name as owner,
+        a.startDate,
+        a.endDate
+
+         from tbl_activity  a
+         join tbl_user  u
+         on a.owner = u.id
+
+         <where>
+             <if test="name != null and name != ''">
+                 and   a.name like '%' #{name} '%'
+             </if>
+
+             <if test="owner != null and owner != ''">
+                 and u.name like '%' #{owner} '%'
+             </if>
+
+             <if test="startDate != null and startDate != ''">
+                 and a.startDate &gt; #{startDate}
+             </if>
+
+             <if test="endDate != null and endDate != ''">
+                 and a.endDate &lt; #{endDate}
+             </if>
+
+         </where>
+        order by a.createTime desc
+        limit #{count}, #{pageSize}
+
+
+
+    </select>
+
+    <select id="getTotalByCondition" resultType="int">
+        select count(*)
+
+        from tbl_activity as a
+        join tbl_user as u
+        on a.owner = u.id
+
+        <where>
+            <if test="name != null and name != ''">
+                and a.name like '%' #{name} '%'
+            </if>
+
+            <if test="owner != null and owner != ''">
+                and u.name like '%' #{owner} '%'
+            </if>
+
+            <if test="startDate != null and startDate != ''">
+                --                  &gt;  表示大于该起始日期
+                and a.startDate &gt; #{startDate}
+            </if>
+
+            <if test="endDate != null and endDate != '' ">
+                --                  &lt;  表示小于结束日期
+                and a.endDate &lt; #{endDate}
+            </if>
+        </where>
+
+    </select>
 
     <!--插入操作-->
     <insert id="save">
@@ -14,4 +88,15 @@
         values ( #{id}, #{owner},#{name},#{startDate},#{endDate},#{cost},#{description},#{createTime},#{createBy}
         )
     </insert>
+
+    <!--删除市场活动-->
+    <delete id="delete">
+        delete
+        from tbl_activity
+        where id in
+        <foreach collection="array" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+
+    </delete>
 </mapper>

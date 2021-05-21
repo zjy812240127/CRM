@@ -8,15 +8,19 @@ import com.zjut.service.UserService;
 import com.zjut.service.impl.ActivityServiceImpl;
 import com.zjut.util.DateTimeUtil;
 import com.zjut.util.UUIDUtil;
+import com.zjut.vo.PaginationVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class ActivityController {
@@ -25,6 +29,19 @@ public class ActivityController {
 
     @Autowired
     private ActivityService activityService;
+
+    @ResponseBody
+    @RequestMapping(value = "/delete.do")
+    public JsonResult delete(HttpServletRequest request, HttpServletResponse response){
+        System.out.println("执行市场活动的删除操作");
+        JsonResult result = new JsonResult();
+        // 获取数组，getParameterValues()
+        String[] ids = request.getParameterValues("id");
+        boolean flag = activityService.delete(ids);
+        result.setSuccess(flag);
+
+        return result;
+    }
 
     @RequestMapping("/getUserList.do")
     @ResponseBody
@@ -77,4 +94,44 @@ public class ActivityController {
 
         return result;
     }
+
+    @RequestMapping(value = "/pageList.do")
+    @ResponseBody
+    public PaginationVO<Activity> pageList( HttpServletResponse response, HttpServletRequest request){
+        PaginationVO<Activity> vo = new PaginationVO<>();
+        String pageNoStr = request.getParameter("pageNo");
+        String pageSizeStr = request.getParameter("pageSize");
+        String name = request.getParameter("name");
+        String owner = request.getParameter("owner");
+        String startDate = request.getParameter("startDate");
+        String endDate = request.getParameter("endDate");
+
+        int pageNo = Integer.valueOf(pageNoStr);
+        int pageSize = Integer.valueOf(pageSizeStr);
+        // 计算略过的记录数
+        int count = (pageNo-1) * pageSize;
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("name",name);
+        map.put("owner",owner);
+        map.put("startDate",startDate);
+        map.put("endDate",endDate);
+        map.put("count",count);
+        map.put("pageSize",pageSize);
+        /**
+         *  用vo对象来传递参数，因为之后有很多分页查询操作，所以同意建立一个vo对象给前端传递参数
+         *      但是vo类要用泛型类，并不是每次都传递Activity对象
+         *      Pagination<Activity> vo = new Pagination<>();
+         *      vo.setTotal(total);
+         *      vo.setDataList(dataList);
+         */
+
+       vo = activityService.searchActivity(map);
+
+       return vo;
+
+
+
+    }
+
+
 }

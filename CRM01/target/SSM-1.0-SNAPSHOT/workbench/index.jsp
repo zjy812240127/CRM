@@ -153,7 +153,7 @@ request.getContextPath()+"/";
 <%--						用EL表达式获取四大域中的对象的属性--%>
 						<span class="glyphicon glyphicon-user"></span> ${sessionScope.user.name} <span class="caret"></span>
 <%--						加入一点空格调整页面--%>
-						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					</a>
 					<ul class="dropdown-menu">
 						<li><a href="settings/index.html"><span class="glyphicon glyphicon-wrench"></span> 系统设置</a></li>
