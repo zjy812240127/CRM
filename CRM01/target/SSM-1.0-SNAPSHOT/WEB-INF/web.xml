@@ -39,6 +39,10 @@
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
+<!--  自定义的监听器-->
+  <listener>
+    <listener-class>com.zjut.listener.SysInitListener</listener-class>
+  </listener>
 
   <!--  注册字符集过滤器-->
   <filter>

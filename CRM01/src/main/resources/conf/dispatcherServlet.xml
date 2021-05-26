@@ -18,10 +18,24 @@
 
     <!--    组件扫描器，扫描ControllerAdvice注解-->
     <context:component-scan base-package="com.zjut.handler"/>
-    <!--    视图解析器-->
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+
+    <!--    组件扫描器，扫描Component注解-->
+<!--    <context:component-scan base-package="com.zjut.listener"/>-->
+
+
+    <!--    视图解析器A,/WEB-INF/jsp/路径下文件-->
+    <bean id = "view" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
+        <property name="viewNames" value="/WEB-INF/jsp*"/><!--对A*或者B*路径进行处理，如果是A/xxx就处理A-->
+        <property name="order" value="1"></property>    <!--设置优先级-->
+
+    </bean>
+<!--    视图解析器B,/路径下文件-->
+    <bean id = "view1" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/"/>
+        <property name="suffix" value=".jsp"/>
+        <property name="order" value="0"></property>       <!--设置优先级-->
     </bean>
 
     <!--    声明拦截器，可以用一个或多个-->

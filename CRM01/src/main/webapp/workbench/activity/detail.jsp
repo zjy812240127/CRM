@@ -57,7 +57,194 @@ request.getContextPath()+"/";
 		$(".myHref").mouseout(function(){
 			$(this).children("span").css("color","#E6E6E6");
 		});
-	});
+
+		// 页面加载完毕后局部刷新备注列表，因为要多个地方局部刷新，所以单独做一个局部刷，不和整个页面绑定在一起
+		showRemarkList();
+
+		// 动画效果，生成备注后面的修改和删除按钮 备注的div id = remarkBody
+        $("#remarkBody").on("mouseover",".remarkDiv",function(){
+            $(this).children("div").children("div").show();
+        })
+        $("#remarkBody").on("mouseout",".remarkDiv",function(){
+            $(this).children("div").children("div").hide();
+        })
+
+        // 为保存备注按钮绑定事件
+        $("#saveRemarkBtn").click(function (){
+            alert("发送添加备注ajax请求")
+            $.ajax({
+                url:"saveRemark.do",
+                data:{
+                    // 用户名后端可以从session域中拿
+                    "noteContent": $.trim($("#remark").val()),
+                    "activityId": "${a.id}"
+                },
+                type:"post",
+                dataType:"json",
+                success: function (data){
+                    if (data.success == true){
+                        alert("添加备注信息成功")
+                        /**
+                        *  data:
+                         *  {"success": true/false, "ar":{备注}}
+                        */
+                        var html = "";
+                            // 处于循环遍历中的组件，不能用起id，然后调用id.click的方法来实现函数；
+                            // 只能直接在遍历语句中用触发的方式，onclick="removeRemark()"
+                        html +=  '  <div id="'+data.ar.id+'" class="remarkDiv" style="height: 60px;">';
+                        html +=  '  <img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
+                        html +=  '  <div style="position: relative; top: -40px; left: 40px;" >';
+                        html +=  '  <h5>'+ data.ar.noteContent +'</h5>';
+                        html +=  ' <font color="gray">市场活动</font> <font color="gray">-</font> <b>${a.name}</b> <small style="color: gray;"> '+(data.ar.createTime)+' 由'+(data.ar.createBy)+'</small>';
+                        html +=  ' <div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
+                        html +=	 '  <a class="myHref" href="javascript:void(0);" ><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #FF0000;"></span></a>';
+                        html +=	 '  &nbsp;&nbsp;&nbsp;&nbsp;';
+                        html +=	 '  <a class="myHref" href="javascript:void(0);" onclick="deleteRemark(\''+data.ar.id+'\')"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FF0000;"></span></a>';
+                        html +=  ' </div>';
+                        html +=  ' </div>';
+                        html +=  ' </div>';
+
+                        $("#remarkDiv").before(html);
+                    }else {
+                        alert("添加备注信息失败")
+                    }
+                }
+            })
+
+
+        })
+
+        // 为修改市场活动模态窗口的更新按钮绑定事件
+        $("#updateRemarkBtn").click(function (){
+
+            var id = $("#remarkId").val();
+
+            $.ajax({
+                url:"updateRemark.do",
+                data:{
+                    "id": id,
+                    "noteContent": $.trim($("#noteContent").val())
+                },
+                type:"post",
+                dataType:"json",
+                success: function (data){
+                    /**
+                    * data:
+                     *      {"success": true/false, "ar": a}
+                    */
+                    if (data.success){
+                        alert("修改备注成功")
+                        alert("后台传过来的noteContent：" +data.ar.noteContent )
+                        $("#e"+ id).html(data.ar.noteContent);
+                        $("#s" + id).html(data.ar.editTime + ' 由'+ data.ar.editBy);
+
+                        // 以上信息更新完毕后关闭模态窗口，
+                        $("#editRemarkModal").modal("hide");
+
+                    }else {
+                        alert("修改备注失败")
+                    }
+                }
+
+            })
+
+        })
+
+    });
+
+	function showRemarkList(){
+	    alert("发送ajax请求刷新备注列表")
+		$.ajax({
+			url: "getRemarkListByAid.do",
+			data: {
+				"activityId": "${a.id}"
+			},
+			type:"get",
+			dataType:"json",
+			success: function (data){
+				alert("返回备注信息");
+				/**
+				 * 查询的信息：属于同一个a.id（市场活动）的备注列表
+				 * 		[{备注1}，{备注2}，{备注3}。。。]
+				 */
+				var html = "";
+
+				$.each(data,function (i,n){
+
+                // 处于循环遍历中的组件，不能用起id，然后调用id.click的方法来实现函数；
+                    // 只能直接在遍历语句中用触发的方式，onclick="removeRemark()"
+				html +=  '  <div id="'+n.id+'" class="remarkDiv" style="height: 60px;">';
+			    html +=  '  <img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
+			    html +=  '  <div style="position: relative; top: -40px; left: 40px;" >';
+				html +=  '  <h5 id = "e'+n.id+'">'+ n.noteContent +'</h5>';
+				html +=  ' <font color="gray">市场活动</font> <font color="gray">-</font> <b>${a.name}</b> <small style="color: gray;" id= "s' + n.id + '"> '+(n.editFlag==0?n.createTime:n.editTime)+' 由'+(n.editFlag==0?n.createBy:n.editBy)+'</small>';
+				html +=  ' <div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
+				html +=	 '  <a class="myHref" href="javascript:void(0);" onclick="editRemark(\''+n.id+'\')" ><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #FF0000;"></span></a>';
+				html +=	 '  &nbsp;&nbsp;&nbsp;&nbsp;';
+				html +=	 '  <a class="myHref" href="javascript:void(0);" onclick="deleteRemark(\''+n.id+'\')"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FF0000;"></span></a>';
+				html +=  ' </div>';
+			    html +=  ' </div>';
+		        html +=  ' </div>';
+				})
+				/**
+				 * 由于标签体内有写好的内容，所以此处不能直接用备注div的id的.html方法（会覆盖体内已有的内容）
+				 * 		可以在备注div体内再新建一个div，并取一个id，用这个div的.html（）方法
+				 * 		或者取体内前一个div调用append方法，
+				 * 		或者取后一个div，调用before方法
+				 */
+				// before方法，在remarkDiv的div上方插入该html语句
+				$("#remarkDiv").before(html);
+
+			}
+			})
+	}
+
+	function editRemark(id){
+	    // alert(id);
+	    // 打开修改市场活动的模态窗口
+        // 找到指定的存放备注信息的h5标签
+
+        // 在模态窗口的隐藏域中为id赋值，id指示选中的是哪一条备注，可以给后台修改
+        $("#remarkId").val(id);
+
+        var noteContent = $("#e" + id).html();
+
+        // 将h5中展现出来的信息，赋予到修改操作模态窗口的文本域中
+        $("#noteContent").val(noteContent);
+
+        // 以上信息处理完毕后，打开修改备注的模态窗口
+        $("#editRemarkModal").modal("show");
+
+    }
+
+	function deleteRemark(id){
+	    // alert(id);
+	    $.ajax({
+            url:"deleteRemark.do",
+            data:{
+                "id":id
+            },
+            type:"post",
+            dataType: "json",
+            success: function (data){
+                /**
+                 * 返回JsonResult对象的success属性，判断是否删除成功
+                 */
+                if (data.success == true){
+                    // 数据库删除成功就刷新一次备注列表
+                    // 以下做法不行，因为会以before的形式，在原有记录上面追加刷新的数据。原数据还会保留
+                    // showRemarkList();
+
+                    // 只能通过div的id找到要移除的div，然后把他删除，动态语句中用n.id来作为唯一指示该div的id值
+                    $("#" + id).remove();
+                }else{
+                    alert("删除失败")
+                }
+            }
+
+            })
+    }
+
 	
 </script>
 
@@ -167,7 +354,7 @@ request.getContextPath()+"/";
 	<!-- 大标题 -->
 	<div style="position: relative; left: 40px; top: -30px;">
 		<div class="page-header">
-			<h3>市场活动-发传单 <small>2020-10-10 ~ 2020-10-20</small></h3>
+			<h3>市场活动-${a.name} <small>${a.startDate} ~ ${a.endDate}</small></h3>
 		</div>
 		<div style="position: relative; height: 50px; width: 250px;  top: -72px; left: 700px;">
 			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
@@ -179,41 +366,41 @@ request.getContextPath()+"/";
 	<div style="position: relative; top: -70px;">
 		<div style="position: relative; left: 40px; height: 30px;">
 			<div style="width: 300px; color: gray;">所有者</div>
-			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>zhangsan</b></div>
+			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${a.owner}</b></div>
 			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">名称</div>
-			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>发传单</b></div>
+			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>${a.name}</b></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px; left: 450px;"></div>
 		</div>
 
 		<div style="position: relative; left: 40px; height: 30px; top: 10px;">
 			<div style="width: 300px; color: gray;">开始日期</div>
-			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>2020-10-10</b></div>
+			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${a.startDate}</b></div>
 			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">结束日期</div>
-			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>2020-10-20</b></div>
+			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>${a.endDate}</b></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px; left: 450px;"></div>
 		</div>
 		<div style="position: relative; left: 40px; height: 30px; top: 20px;">
 			<div style="width: 300px; color: gray;">成本</div>
-			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>4,000</b></div>
+			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${a.cost}</b></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -20px;"></div>
 		</div>
 		<div style="position: relative; left: 40px; height: 30px; top: 30px;">
 			<div style="width: 300px; color: gray;">创建者</div>
-			<div style="width: 500px;position: relative; left: 200px; top: -20px;"><b>zhangsan&nbsp;&nbsp;</b><small style="font-size: 10px; color: gray;">2017-01-18 10:10:10</small></div>
+			<div style="width: 500px;position: relative; left: 200px; top: -20px;"><b>${a.createBy}&nbsp;&nbsp;</b><small style="font-size: 10px; color: gray;">${a.createTime}</small></div>
 			<div style="height: 1px; width: 550px; background: #D5D5D5; position: relative; top: -20px;"></div>
 		</div>
 		<div style="position: relative; left: 40px; height: 30px; top: 40px;">
 			<div style="width: 300px; color: gray;">修改者</div>
-			<div style="width: 500px;position: relative; left: 200px; top: -20px;"><b>zhangsan&nbsp;&nbsp;</b><small style="font-size: 10px; color: gray;">2017-01-19 10:10:10</small></div>
+			<div style="width: 500px;position: relative; left: 200px; top: -20px;"><b>${a.editBy}&nbsp;&nbsp;</b><small style="font-size: 10px; color: gray;">${a.editTime}</small></div>
 			<div style="height: 1px; width: 550px; background: #D5D5D5; position: relative; top: -20px;"></div>
 		</div>
 		<div style="position: relative; left: 40px; height: 30px; top: 50px;">
 			<div style="width: 300px; color: gray;">描述</div>
 			<div style="width: 630px;position: relative; left: 200px; top: -20px;">
 				<b>
-					市场活动Marketing，是指品牌主办或参与的展览会议与公关市场活动，包括自行主办的各类研讨会、客户交流会、演示会、新产品发布会、体验会、答谢会、年会和出席参加并布展或演讲的展览会、研讨会、行业交流会、颁奖典礼等
+					${a.description}
 				</b>
 			</div>
 			<div style="height: 1px; width: 850px; background: #D5D5D5; position: relative; top: -20px;"></div>
@@ -221,45 +408,45 @@ request.getContextPath()+"/";
 	</div>
 	
 	<!-- 备注 -->
-	<div style="position: relative; top: 30px; left: 40px;">
+	<div id = "remarkBody" style="position: relative; top: 30px; left: 40px;">
 		<div class="page-header">
 			<h4>备注</h4>
 		</div>
 		
 		<!-- 备注1 -->
-		<div class="remarkDiv" style="height: 60px;">
-			<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
-			<div style="position: relative; top: -40px; left: 40px;" >
-				<h5>哎呦！</h5>
-				<font color="gray">市场活动</font> <font color="gray">-</font> <b>发传单</b> <small style="color: gray;"> 2017-01-22 10:10:10 由zhangsan</small>
-				<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
-					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
-					&nbsp;&nbsp;&nbsp;&nbsp;
-					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
-				</div>
-			</div>
-		</div>
+<%--		<div class="remarkDiv" style="height: 60px;">--%>
+<%--			<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">--%>
+<%--			<div style="position: relative; top: -40px; left: 40px;" >--%>
+<%--				<h5>哎呦！</h5>--%>
+<%--				<font color="gray">市场活动</font> <font color="gray">-</font> <b>${a.name}</b> <small style="color: gray;"> ${a.createTime} 由${a.createBy}</small>--%>
+<%--				<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">--%>
+<%--					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>--%>
+<%--					&nbsp;&nbsp;&nbsp;&nbsp;--%>
+<%--					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>--%>
+<%--				</div>--%>
+<%--			</div>--%>
+<%--		</div>--%>
 		
 		<!-- 备注2 -->
-		<div class="remarkDiv" style="height: 60px;">
-			<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
-			<div style="position: relative; top: -40px; left: 40px;" >
-				<h5>呵呵！</h5>
-				<font color="gray">市场活动</font> <font color="gray">-</font> <b>发传单</b> <small style="color: gray;"> 2017-01-22 10:20:10 由zhangsan</small>
-				<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">
-					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>
-					&nbsp;&nbsp;&nbsp;&nbsp;
-					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>
-				</div>
-			</div>
-		</div>
+<%--		<div class="remarkDiv" style="height: 60px;">--%>
+<%--			<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">--%>
+<%--			<div style="position: relative; top: -40px; left: 40px;" >--%>
+<%--				<h5>呵呵！</h5>--%>
+<%--				<font color="gray">市场活动</font> <font color="gray">-</font> <b>发传单</b> <small style="color: gray;"> 2017-01-22 10:20:10 由zhangsan</small>--%>
+<%--				<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">--%>
+<%--					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color: #E6E6E6;"></span></a>--%>
+<%--					&nbsp;&nbsp;&nbsp;&nbsp;--%>
+<%--					<a class="myHref" href="javascript:void(0);"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #E6E6E6;"></span></a>--%>
+<%--				</div>--%>
+<%--			</div>--%>
+<%--		</div>--%>
 		
 		<div id="remarkDiv" style="background-color: #E6E6E6; width: 870px; height: 90px;">
 			<form role="form" style="position: relative;top: 10px; left: 10px;">
 				<textarea id="remark" class="form-control" style="width: 850px; resize : none;" rows="2"  placeholder="添加备注..."></textarea>
 				<p id="cancelAndSaveBtn" style="position: relative;left: 737px; top: 10px; display: none;">
 					<button id="cancelBtn" type="button" class="btn btn-default">取消</button>
-					<button type="button" class="btn btn-primary">保存</button>
+					<button type="button" id="saveRemarkBtn" class="btn btn-primary">保存</button>
 				</p>
 			</form>
 		</div>

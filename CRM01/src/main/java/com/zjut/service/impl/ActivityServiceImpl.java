@@ -3,12 +3,18 @@ package com.zjut.service.impl;
 import com.zjut.dao.ActivityDao;
 import com.zjut.dao.ActivityRemarkDao;
 import com.zjut.domain.Activity;
+import com.zjut.domain.ActivityRemark;
+import com.zjut.domain.User;
 import com.zjut.service.ActivityService;
+import com.zjut.service.UserService;
 import com.zjut.vo.PaginationVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +26,9 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Autowired
     private ActivityRemarkDao activityRemarkDao;
+
+    @Autowired
+    private UserService userService;
 
 
     @Override
@@ -76,6 +85,88 @@ public class ActivityServiceImpl implements ActivityService {
 
 
         return flag;
+    }
+
+    @Override
+    public Map<String, Object> getUserListAndActivity(String id) {
+
+        Map<String,Object> map = new HashMap<>();
+        List<User> list = userService.getUserList();
+        System.out.println(list);
+        Activity a = activityDao.getById(id);
+        System.out.println(a.getCreateTime());
+        map.put("uList",list);
+        map.put("a",a);
+
+        return map;
+    }
+
+    @Override
+    public boolean update(Activity a) {
+        int nums = activityDao.update(a);
+        System.out.println("修改提交受影响的记录数");
+        boolean flag = false;
+        if (nums > 0 ){
+            flag = true;
+        }
+        return flag;
+    }
+
+    @Override
+    public Activity detail(String id) {
+        Activity a = activityDao.detail(id);
+        return a;
+    }
+
+    @Override
+    public List<ActivityRemark> getRemarkListByAid(String activityId) {
+        //List<ActivityRemark> list = activityDao.getRemarkListByAid(activityId);
+        List<ActivityRemark> list = activityRemarkDao.getRemarkListByAid(activityId);
+        return list;
+    }
+
+    @Override
+    public boolean deleteRemarkById(String id) {
+        boolean flag = false;
+        int count = activityRemarkDao.deleteRemarkById(id);
+        if (count > 0){
+            flag = true;
+        }
+        return flag;
+    }
+
+    @Override
+    public Map<String, Object> saveRemark(ActivityRemark ar) {
+        Map<String,Object> map = new HashMap<>();
+        boolean flag = false;
+
+        int count = activityRemarkDao.saveRemark(ar);
+        if (count > 0){
+            flag = true;
+            String arId = ar.getId();
+            ActivityRemark activityRemark = activityRemarkDao.findRemark(arId);
+            map.put("ar", activityRemark);
+            map.put("success",flag);
+        }else{
+            System.out.println("数据库添加备注失败");
+        }
+
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> updateRemark(ActivityRemark ar) {
+        Map<String,Object> map = new HashMap<>();
+        boolean flag = false;
+        String arId = ar.getId();
+        int count = activityRemarkDao.updateRemark(ar);
+        if (count >0){
+            flag = true;
+            ActivityRemark activityRemark = activityRemarkDao.findRemark(arId);
+            map.put("success",flag);
+            map.put("ar", activityRemark);
+        }
+        return map;
     }
 
 

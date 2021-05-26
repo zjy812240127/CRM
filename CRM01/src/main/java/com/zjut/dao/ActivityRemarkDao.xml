@@ -23,6 +23,53 @@
         </foreach>
     </delete>
 
+    <select id="getRemarkListByAid" resultType="com.zjut.domain.ActivityRemark">
+        select *
+        from tbl_activity_remark
+        where activityId = #{activityId}
+
+    </select>
+
+    <delete id="deleteRemarkById" >
+        delete from tbl_activity_remark
+        where id = #{id}
+    </delete>
+
+    <insert id="saveRemark" >
+        insert into tbl_activity_remark (
+            id,
+            noteContent,
+            createTime,
+            createBy,
+            editFlag,
+            activityId
+        )
+        values(
+            #{id},
+            #{noteContent},
+            #{createTime},
+            #{createBy},
+            #{editFlag},
+            #{activityId}
+        )
+    </insert>
+
+    <select id="findRemark" resultType="com.zjut.domain.ActivityRemark">
+        select * from tbl_activity_remark
+        where id = #{arId}
+    </select>
+
+    <update id="updateRemark">
+        update tbl_activity_remark
+        set
+            noteContent = #{noteContent},
+            editTime = #{editTime},
+            editBy = #{editBy},
+            editFlag = #{editFlag}
+
+        where id = #{id}
+    </update>
+
 
     <!--插入操作-->
     <insert id="">

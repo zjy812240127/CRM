@@ -15,7 +15,6 @@
 
                 </where>
                 -->
-
     <select id="searchActivity" resultType="com.zjut.domain.Activity">
         select
         a.id,
@@ -99,4 +98,46 @@
         </foreach>
 
     </delete>
+
+    <select id="getById" resultType="com.zjut.domain.Activity">
+        select *
+        from tbl_activity
+        where id = #{id}
+    </select>
+
+    <update id="update" >
+        update tbl_activity set
+
+        owner = #{owner},
+        name = #{name},
+        startDate = #{startDate},
+        endDate = #{endDate},
+        cost = #{cost},
+        description = #{description},
+        editTime = #{editTime},
+        editBy = #{editBy}
+        where id = #{id}
+    </update>
+
+    <select id="detail" resultType="com.zjut.domain.Activity">
+        select
+            a.id,
+            u.name as owner,
+            a.name,
+            a.startDate,
+            a.endDate,
+            a.cost,
+            a.description,
+            a.createTime,
+            a.createBy,
+            a.editTime,
+            a.editBy
+
+        from tbl_activity a
+        join tbl_user u
+        on a.owner = u.id
+        where a.id = #{id}
+    </select>
+
+
 </mapper>
