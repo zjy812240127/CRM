@@ -7,4 +7,6 @@ public interface ClueDao {
 
 
     int saveClue(Clue clue);
+
+    Clue detail(String id);
 }

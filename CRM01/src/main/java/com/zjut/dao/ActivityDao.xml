@@ -139,5 +139,56 @@
         where a.id = #{id}
     </select>
 
+    <select id="findActivity" resultType="com.zjut.domain.Activity">
+        select * from tbl_activity ;
+--         select
+--             a.id,
+--             a.name,
+--             a.startDate,
+--             a.endDate,
+--             u.name as owner
+--         from tbl_activity a
+--         join tbl_user u
+--         on a.owner = u.id
+-- --         where a.name like '%' #{aName} '%'
+--          and a.id not in (
+--             select activityId
+--             from tbl_clue_activity_relation
+--             where clueId = #{clueId}
+--         )
+
+    </select>
+
+    <select id="findActivityByName" resultType="com.zjut.domain.Activity">
+        select
+            a.id,
+            a.name,
+            a.startDate,
+            a.endDate,
+            u.name as owner
+        from tbl_activity a
+        join tbl_user u
+        on a.owner = u.id
+        where a.name like '%' #{aName} '%'
+         and a.id not in (
+            select activityId
+            from tbl_clue_activity_relation
+            where clueId = #{clueId}
+        )
+    </select>
+
+    <select id="changeSearchActivity" resultType="com.zjut.domain.Activity">
+        select
+            a.id,
+            a.name,
+            a.startDate,
+            a.endDate,
+            u.name as owner
+        from tbl_activity a
+        join tbl_user u
+        on a.owner = u.id
+        where a.name like '%' #{aName} '%';
+    </select>
+
 
 </mapper>

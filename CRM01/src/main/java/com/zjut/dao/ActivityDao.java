@@ -2,6 +2,7 @@ package com.zjut.dao;
 
 import com.zjut.domain.Activity;
 import com.zjut.domain.ActivityRemark;
+import com.zjut.domain.ClueActivityRelation;
 
 import java.util.List;
 import java.util.Map;
@@ -24,5 +25,11 @@ public interface ActivityDao {
 
     Activity detail(String id);
 
-     // List<ActivityRemark> getRemarkListByAid(String activityId);
+
+     List<Activity> findActivity(String aName,  String clueId);
+
+    List<Activity> findActivityByName(Map<String,String> map);
+
+    List<Activity> changeSearchActivity(String aName);
+
 }

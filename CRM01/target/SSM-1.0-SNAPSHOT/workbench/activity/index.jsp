@@ -201,6 +201,7 @@ request.getContextPath()+"/";
 						// 因为每个标签的value值就是n.id，所以要取得每个dom对象的value值
 						// $(dom对象) = jquery对象
 						// jquery对象[下标] = dom对象
+						// 地址栏传递参数时不能有空格
 						param += "id=" + $($xz[i]).val();
 						// 地址栏中多个参数之间用&隔开，所以，只要不是最后一个dom对象，在后面就要加一个符号&
 						if (i < $xz.length - 1){

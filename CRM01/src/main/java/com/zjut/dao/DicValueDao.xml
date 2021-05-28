@@ -6,6 +6,6 @@
 
 
     <select id="getValue" resultType="com.zjut.domain.DicValue">
-        select * from tbl_dic_value where typeCode = #{dType};
+        select * from tbl_dic_value where typeCode = #{dType} order by orderNo;
     </select>
 </mapper>
