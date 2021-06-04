@@ -1,9 +1,6 @@
 package com.zjut.controller;
 
-import com.zjut.domain.Activity;
-import com.zjut.domain.Clue;
-import com.zjut.domain.JsonResult;
-import com.zjut.domain.User;
+import com.zjut.domain.*;
 import com.zjut.service.ClueService;
 import com.zjut.service.UserService;
 import com.zjut.util.DateTimeUtil;
@@ -147,14 +144,53 @@ public class ClueController {
     public String convert(HttpServletRequest request){
         System.out.println("处理转换操作");
         // 用flag判断是否需要创建交易
+        /**
+         * 要往业务层传的参数有交易对象t，线索id，以及createBy，
+         *  因为业务层可以使用UUID工具类
+         *  但不能调用request对象，
+         *  每张表的每条记录都需要id、createTime以及createBy
+         *
+         */
         String flag = request.getParameter("flag");
+        String clueID = request.getParameter("clueId");
+        System.out.println("controller层收到的clueID:" + clueID);
+        String createBy = ((User)request.getSession().getAttribute("user")).getName();
+        Tran t = null;
+
         if ("a".equals(flag)){
             System.out.println("需要创建交易");
+            t = new Tran();
+            String money = request.getParameter("money");
+            String name = request.getParameter("name");
+            String expectedDate = request.getParameter("expectedDate");
+            String stage = request.getParameter("stage");
+            String activityId = request.getParameter("activityId");
+            String id = UUIDUtil.getUUID();
+            t.setCreateTime(DateTimeUtil.getSysTime());
+            t.setCreateBy(createBy);
+            t.setActivityId(activityId);
+            t.setMoney(money);
+            t.setId(id);
+            t.setName(name);
+            t.setExpectedDate(expectedDate);
+            t.setStage(stage);
         }else{
             System.out.println("不需要创建交易");
         }
 
-        return null;
+        Map<String,Object> map = new HashMap<>();
+        map.put("clueId",clueID);
+        map.put("createBy",createBy);
+        map.put("t",t);
+        boolean resultFlag = clueService.convert(map);
+
+        if(resultFlag == true){
+            System.out.println("后台处理转换成功");
+        }else {
+            System.out.println("后台处理转换失败");
+        }
+
+        return "workbench/clue/convert";
     }
 
 

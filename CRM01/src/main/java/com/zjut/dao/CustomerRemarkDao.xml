@@ -4,7 +4,26 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.zjut.dao.CustomerRemarkDao">
-	
+	<insert id="saveCustomerRemark" >
+        insert into tbl_customer_remark (
+            id,
+            noteContent,
+            createBy,
+            createTime,
+            editFlag,
+            customerId
+
+        )
+        values (
+            #{id},
+            #{noteContent},
+            #{createBy},
+            #{createTime},
+            #{editFlag},
+            #{customerId}
+
+        )
+    </insert>
   	
 </mapper>
 

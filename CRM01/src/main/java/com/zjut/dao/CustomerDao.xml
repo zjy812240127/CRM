@@ -4,7 +4,49 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.zjut.dao.CustomerDao">
-	
+
+    <select id="findCustomerByName" resultType="com.zjut.domain.Customer">
+        select * from tbl_customer where name = #{company};
+    </select>
+
+    <insert id="saveCustomer" >
+        insert into tbl_customer (
+            id,
+            owner,
+            name,
+            website,
+            phone,
+            createBy,
+            createTime,
+            contactSummary,
+            nextContactTime,
+            description,
+            address
+
+        )
+        values (
+           #{id},
+           #{owner},
+           #{name},
+           #{website},
+           #{phone},
+           #{createBy},
+           #{createTime},
+           #{contactSummary},
+           #{nextContactTime},
+           #{description},
+           #{address}
+        )
+    </insert>
+
+    <select id="getFullName" resultType="String">
+        select name from tbl_customer
+        where name like  '%' #{name} '%'
+    </select>
+
+    <select id="searchByName" resultType="com.zjut.domain.Customer">
+        select * from tbl_customer where name = #{customerName};
+    </select>
   	
 </mapper>
 

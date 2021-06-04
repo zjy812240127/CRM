@@ -11,10 +11,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import java.util.*;
 
 
 // 实现的是ServletContextListener接口，也就是说监听的是servlet的上下文对象
@@ -29,8 +26,6 @@ public class SysInitListener implements ServletContextListener {
     // 初始化时不能通过@Autowired来注入对象，非controller包路径下的普通类也不能用依赖注入
 //    @Autowired
 //    private DicService dicService;
-
-
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
@@ -69,6 +64,44 @@ public class SysInitListener implements ServletContextListener {
         }
 
         System.out.println("服务器缓存处理数据字典结束");
+
+        // ===============================================
+        // 数据字典处理完后在缓存中处理stage2possibility.properties文件
+        /**
+         * 处理properties文件的过程
+         *      1.解析文件，将properties文件的键值对关系解析成java中的键值对关系（map）
+         *          Map<String(阶段stage),String(可能性posibility)> pMap =
+         *              pMap.put("01资质审查", 10)
+         *              ...
+         *
+         *              pMap保存完键值对之后保存在缓存中
+         *              application.setAttribute("pMap", pMap)
+         *
+         */
+
+        // 解析properties文件
+        Map<String, String> pMap = new HashMap<>();
+        System.out.println("1");
+        ResourceBundle rb = ResourceBundle.getBundle("conf/Stage2Possibility");
+        System.out.println("2");
+        //使用枚举遍历取得的属性文件的键值对
+        Enumeration<String> e = rb.getKeys();
+        System.out.println("3");
+
+        while(e.hasMoreElements()){
+            // 阶段
+            String key = e.nextElement();
+            // 可能性
+            String value = rb.getString(key);
+
+            pMap.put(key,value);
+        }
+        System.out.println("4");
+
+        // 保存到服务器缓存
+        application.setAttribute("pMap",pMap);
+        System.out.println("服务器解析properties文件结束");
+
 
 
 

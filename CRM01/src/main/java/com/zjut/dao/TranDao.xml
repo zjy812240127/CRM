@@ -4,7 +4,133 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.zjut.dao.TranDao">
-	
+	<insert id="saveTran" >
+        insert into tbl_tran (
+
+            id,
+            owner,
+            money,
+            name,
+            expectedDate,
+            customerId,
+            stage,
+            source,
+            activityId,
+            contactsId,
+            createBy,
+            createTime,
+            description,
+            contactSummary,
+            nextContactTime
+
+        )
+        values (
+           #{id},
+           #{owner},
+           #{money},
+           #{name},
+           #{expectedDate},
+           #{customerId},
+           #{stage},
+           #{source},
+           #{activityId},
+           #{contactsId},
+           #{createBy},
+           #{createTime},
+           #{description},
+           #{contactSummary},
+           #{nextContactTime}
+
+        )
+    </insert>
+
+    <insert id="addTran">
+        insert into tbl_tran (
+            id,
+            owner,
+            money,
+            name,
+            expectedDate,
+            customerId,
+            stage,
+            type,
+            source,
+            activityId,
+            contactsId,
+            createBy,
+            createTime,
+            description,
+            contactSummary,
+            nextContactTime
+
+        )
+        values (
+           #{id},
+           #{owner},
+           #{money},
+           #{name},
+           #{expectedDate},
+           #{customerId},
+           #{stage},
+           #{type},
+           #{source},
+           #{activityId},
+           #{contactsId},
+           #{createBy},
+           #{createTime},
+           #{description},
+           #{contactSummary},
+           #{nextContactTime}
+
+        )
+    </insert>
+
+    <select id="searchTranById" resultType="com.zjut.domain.Tran">
+        select
+            t.id,
+            u.name as owner,
+            t.money,
+            t.name,
+            t.expectedDate,
+            c.name as customerId,
+            t.stage,
+            t.type,
+            t.source,
+            a.name as activityId,
+            cs.fullname as contactsId,
+            t.createBy,
+            t.createTime,
+            t.editBy,
+            t.editTime,
+            t.description,
+            t.contactSummary,
+            t.nextContactTime
+
+
+        from tbl_tran t
+         join tbl_user u
+         on t.owner = u.id
+         join tbl_customer c
+         on t.customerId = c.id
+         left join tbl_activity a
+         on t.activityId = a.id
+         left join tbl_contacts cs
+         on t.contactsId = cs.id
+
+        where t.id = #{id};
+    </select>
+
+    <update id="changeStage">
+        update tbl_tran set
+        stage = #{stage},
+        editBy = #{editBy},
+        editTime = #{editTime}
+        where id = #{id}
+
+    </update>
+
+
+
   	
 </mapper>
 

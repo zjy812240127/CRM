@@ -24,4 +24,6 @@ public interface ClueService {
     boolean associate(Map<String, Object> map);
 
     List<Activity> changeSA(String aName);
+
+    boolean convert(Map<String, Object> map);
 }

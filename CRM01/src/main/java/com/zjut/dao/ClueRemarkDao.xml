@@ -4,7 +4,13 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.zjut.dao.ClueRemarkDao">
-	
+	<select id="findClueRemarkByClueId" resultType="com.zjut.domain.ClueRemark">
+        select * from tbl_clue_remark where clueId = #{clueId};
+    </select>
+
+    <delete id="deleteClueRemarkByClueId">
+        delete from tbl_clue_remark where clueId = #{clueId};
+    </delete>
   	
 </mapper>
 

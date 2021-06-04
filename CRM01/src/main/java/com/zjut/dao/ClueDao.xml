@@ -76,6 +76,14 @@
         on c.owner = u.id
         where c.id = #{id};
     </select>
+
+    <select id="findClueByName" resultType="com.zjut.domain.Clue">
+        select * from tbl_clue where id = #{clueId};
+    </select>
+
+    <delete id="deleteById">
+        delete from tbl_clue where id = #{clueId};
+    </delete>
 	
 	
   	

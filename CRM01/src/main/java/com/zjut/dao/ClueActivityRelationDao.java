@@ -16,4 +16,8 @@ public interface ClueActivityRelationDao {
 
     int associateActivity(Map<String, Object> map);
 
+    List<ClueActivityRelation> findClueActivityRelationByClueId(String clueId);
+
+    int deleteClueActivityRelationByClueId(String clueId);
+
 }
