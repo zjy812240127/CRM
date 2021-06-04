@@ -19,4 +19,6 @@ public interface TranService {
     List<TranHistory> getHistoryList(String tranId, Map<String,String> pMap);
 
     Map<String, Object> changeStage(Tran tran);
+
+    Map<String, Object> getEcharts();
 }

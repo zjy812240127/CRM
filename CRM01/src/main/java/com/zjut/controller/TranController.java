@@ -133,5 +133,20 @@ public class TranController {
     }
 
 
+    @ResponseBody
+    @RequestMapping(value = "/getEcharts.do")
+    public Map<String,Object> getEcharts(){
+        System.out.println("获取ECharts图表数据");
+
+        Map<String,Object> map = tranService.getEcharts();
+//        System.out.println("map的total属性值"+map.get("total"));
+
+
+
+        return map;
+
+    }
+
+
 
 }

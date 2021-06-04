@@ -162,4 +162,31 @@ public class TranServiceImpl implements TranService {
 
     }
 
+    @Override
+    public Map<String, Object> getEcharts() {
+
+        System.out.println("进入获取echarts数据的impl业务层");
+        Map<String,Object> map = new HashMap<>();
+
+        // 取得total
+        int total = tranDao.getTotal();
+        System.out.println("total：" + total);
+
+        // 取得dataList
+        List<Map<String,Object>> dataList = tranDao.getEchartsParams();
+
+        // 用map封装两个属性
+        map.put("total",total);
+        map.put("dataList",dataList);
+
+
+
+        for(Map<String,Object> mapList: dataList){
+            System.out.println( "遍历name"+ mapList.get("name"));
+            System.out.println("遍历value" +  mapList.get("value"));
+        }
+
+        return map;
+    }
+
 }
